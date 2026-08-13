@@ -68,7 +68,7 @@ public class WalkInRegistration {
     
     public void getFrontGuest(){
         if(walkInGuest.isEmpty()){
-            walk+InUI.displayEmptyQueueMessage();
+            walkInUI.displayEmptyQueueMessage();
         } else {
             walkInUI.displayNextGuest(walkInGuest.getFront());
         }

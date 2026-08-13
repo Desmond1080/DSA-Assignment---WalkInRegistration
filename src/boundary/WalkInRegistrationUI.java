@@ -9,8 +9,8 @@ package boundary;
  * @author Desmond
  */
 
-import control.WalkInRegistration;
 import Entity.Guest;
+import Entity.Guest.GuestType;
 
 import java.util.Scanner;
 
@@ -20,14 +20,14 @@ public class WalkInRegistrationUI {
     
     
     public int getMenuChoice(){
-        System.out.println("Main Menu\n");
+        System.out.println("\n===== Main Menu =====");
         System.out.println("1. Register Walk-In Guest ");
         System.out.println("2. Process Next Guest ");
         System.out.println("3. View All Guest ");
         System.out.println("4. Get Top Guest ");
         System.out.println("0. Exit.... ");
         
-        System.out.println("Enter choice: ");
+        System.out.print("Enter choice: ");
         int choice = scanner.nextInt();
         scanner.nextLine();
         System.out.println();
@@ -35,29 +35,66 @@ public class WalkInRegistrationUI {
     }
     
     public void displayEmptyQueueMessage(){
-        System.out.println("The queue of guest is empty. ");
+        System.out.println("The queue of guest is empty. No guests waiting....");
     }
     
-    public String toString(){
-        return "Confirmation No: " + confirmationNumber + "\n" +
-            "Name: " + name + "\n" +
-            "Contact: " + contactNumber + "\n" +
-            "Guest Type: " + guestType + "\n" +
-            "Room Type: " + requestedRoomType + "\n" +
-            "Arrival: " + arrivalDateTime.format(DATE_TIME_FORMAT) + "\n" +
-            "Number of Guests: " + numberOfGuests + "\n" +
-            "Status: " + status;
-    }
-    public String inputGuestDetails(){
-        System.out.println("1. Enter Guest Name: ");
+    public Guest inputGuestDetails(){
+        System.out.println("Enter Guest Name: ");
         String name = scanner.nextLine();
         
-        System.out.println("2. Enter Guest Contact Number: ");
+        System.out.println("Enter Guest Contact Number: ");
         String contactNumber = scanner.nextLine();
         
-        System.out.println("3. Enter Guest Room Type: ");
+        GuestType guestType = inputGuestType();
+        
+        System.out.println("Enter Guest Room Type: ");
         String roomType = scanner.nextLine();
         
-        System.out.println("4. Enter ");
+        System.out.println("Enter Number of Guests: ");
+        int numberOfGuests = scanner.nextInt();
+        scanner.nextLine();
+        
+        System.out.println();
+        
+        return new Guest(name, contactNumber, guestType, roomType, numberOfGuests); 
+        
     }
+    
+    public GuestType inputGuestType(){
+        System.out.println("\n===== Select Guest Type =====");
+        System.out.println("1. Walk-In");
+        System.out.println("2. Standard Booking");
+        System.out.println("Enter choice : ");
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        
+        if (choice == 2){
+            return GuestType.STANDARD_BOOKING;
+        }
+        
+        return GuestType.WALK_IN;
+    }
+    
+    public void displayRegistrationSuccess(Guest newGuest){
+        System.out.println("New Guest registered successfully!!");
+        System.out.println(newGuest);
+    }
+    
+    public void displayServedGuest(Guest servedGuest){
+        System.out.println("Now serving... ");
+        System.out.println(servedGuest);
+    }
+    
+    public void displayQueue(String queueDetails, int numberOfGuests){
+        System.out.println("Current Queue (" + numberOfGuests + " guests(s) waiting):"); 
+        System.out.println(queueDetails);
+    }
+    
+    public void displayNextGuest(Guest nextGuest){
+        System.out.println("Next guest in line: ");
+        System.out.println(nextGuest);
+    }
+    
+    
+    
 }
