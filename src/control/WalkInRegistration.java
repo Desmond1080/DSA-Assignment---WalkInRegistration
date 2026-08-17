@@ -9,14 +9,17 @@ package control;
  * @author Desmond
  */
 
-import QueueADT.QueueInterface;
-import QueueADT.LinkedQueue;
+import adt.QueueInterface;
+import adt.LinkedQueue;
 import boundary.WalkInRegistrationUI;
 import Entity.Guest;
+import adt.ArrayList;
+import adt.ListInterface;
 
 public class WalkInRegistration {
     private QueueInterface<Guest> walkInGuest = new LinkedQueue<>();
     private WalkInRegistrationUI walkInUI = new WalkInRegistrationUI();
+    private ListInterface<Guest> processedGuests = new ArrayList<>(); // store list of processed guest after changing the status to registered
     
     public void registration(){
         int choice;
@@ -58,6 +61,7 @@ public class WalkInRegistration {
         } else {
             Guest servedGuest = walkInGuest.dequeue();
             servedGuest.setStatus("Registered");
+            processedGuests.add(servedGuest); // add the served Guest to the array list 
             walkInUI.displayServedGuest(servedGuest);
         }
     }

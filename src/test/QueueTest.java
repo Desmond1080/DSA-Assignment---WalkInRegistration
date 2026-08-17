@@ -11,8 +11,8 @@ package test;
 
 import Entity.Guest;
 import Entity.Guest.GuestType;
-import QueueADT.QueueInterface;
-import QueueADT.LinkedQueue;
+import adt.QueueInterface;
+import adt.LinkedQueue;
 
 public class QueueTest {
      public static void main(String[] args) {

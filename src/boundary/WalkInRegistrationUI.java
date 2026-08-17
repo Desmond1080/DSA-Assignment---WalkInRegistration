@@ -28,9 +28,7 @@ public class WalkInRegistrationUI {
         System.out.println("0. Exit.... ");
         
         System.out.print("Enter choice: ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        System.out.println();
+        int choice = validateIntegerChoice();
         return choice;
     }
     
@@ -39,20 +37,19 @@ public class WalkInRegistrationUI {
     }
     
     public Guest inputGuestDetails(){
-        System.out.println("Enter Guest Name: ");
+        System.out.print("Enter Guest Name: ");
         String name = scanner.nextLine();
         
-        System.out.println("Enter Guest Contact Number: ");
+        System.out.print("Enter Guest Contact Number: ");
         String contactNumber = scanner.nextLine();
         
         GuestType guestType = inputGuestType();
         
-        System.out.println("Enter Guest Room Type: ");
+        System.out.print("Enter Guest Room Type: ");
         String roomType = scanner.nextLine();
         
-        System.out.println("Enter Number of Guests: ");
-        int numberOfGuests = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("Enter Number of Guests: ");
+        int numberOfGuests = validateIntegerChoice();
         
         System.out.println();
         
@@ -64,9 +61,8 @@ public class WalkInRegistrationUI {
         System.out.println("\n===== Select Guest Type =====");
         System.out.println("1. Walk-In");
         System.out.println("2. Standard Booking");
-        System.out.println("Enter choice : ");
-        int choice = scanner.nextInt();
-        scanner.nextLine();
+        System.out.print("Enter choice : ");
+        int choice = validateIntegerChoice();
         
         if (choice == 2){
             return GuestType.STANDARD_BOOKING;
@@ -95,6 +91,13 @@ public class WalkInRegistrationUI {
         System.out.println(nextGuest);
     }
     
-    
-    
+    public int validateIntegerChoice(){
+        while(!scanner.hasNextInt()){
+             System.out.println("Invalid integer input. please enter a number: ");
+             scanner.next();
+       }
+        int choice = scanner.nextInt();
+        scanner.nextLine();
+        return choice;
+    }
 }
