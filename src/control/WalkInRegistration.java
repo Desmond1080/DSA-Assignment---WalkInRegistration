@@ -15,6 +15,7 @@ import boundary.WalkInRegistrationUI;
 import Entity.Guest;
 import adt.ArrayList;
 import adt.ListInterface;
+import utility.sortGuestUtility;
 
 public class WalkInRegistration {
     private QueueInterface<Guest> walkInGuest = new LinkedQueue<>();
@@ -40,6 +41,9 @@ public class WalkInRegistration {
                     break;
                 case 4:
                     getFrontGuest();
+                    break;
+                case 5:
+                    generateWaitingQueueReport();
                     break;
                 default:
                     System.out.println("\n Invalid Choice");
@@ -76,6 +80,29 @@ public class WalkInRegistration {
         } else {
             walkInUI.displayNextGuest(walkInGuest.getFront());
         }
+    }
+    
+    public void generateWaitingQueueReport(){
+        Guest[] items = getQueueItem();
+        sortGuestUtility.sortByArrivalTime(items);
+    }
+    
+    // use for generating report 
+    public Guest[] getQueueItem(){
+        int size = walkInGuest.getNumberOfEntries();
+        Guest[] items = new Guest[size];
+        
+        // dequeue the items from the linked queue 
+        for(int i = 0; i < size; i++){
+            items[i] = walkInGuest.dequeue();
+        }
+        
+        // enqueue back the items back to the linked queue after generate the report 
+        for(int i = 0; i < size; i++){
+            walkInGuest.enqueue(items[i]);
+        }
+        
+        return items;
     }
     
     public static void main(String[] args){
