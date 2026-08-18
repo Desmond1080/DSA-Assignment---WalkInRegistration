@@ -13,18 +13,51 @@ import adt.QueueInterface;
 import adt.LinkedQueue;
 import boundary.WalkInRegistrationUI;
 import Entity.Guest;
+import Entity.Guest.GuestType;
 import adt.ArrayList;
 import adt.ListInterface;
-import utility.sortGuestUtility;
+import java.time.LocalDateTime;
+import utility.FilterGuestType;
+import utility.ScreenUtility;
+import utility.SearchGuestUtility;
+import utility.SortGuestUtility;
 
 public class WalkInRegistration {
     private QueueInterface<Guest> walkInGuest = new LinkedQueue<>();
     private WalkInRegistrationUI walkInUI = new WalkInRegistrationUI();
     private ListInterface<Guest> processedGuests = new ArrayList<>(); // store list of processed guest after changing the status to registered
     
+    public WalkInRegistration(){
+        loadDummyData();
+    }
+    
+    private void loadDummyData(){
+        Guest g1 = new Guest("Ali Bin Ahmad", "0123456789", GuestType.WALK_IN, "Single", 1);
+        g1.setArrivalDateTime(LocalDateTime.now().minusMinutes(30));  
+
+        Guest g2 = new Guest("Siti Nurhaliza", "0198765432", GuestType.STANDARD_BOOKING, "Double", 2);
+        g2.setArrivalDateTime(LocalDateTime.now().minusMinutes(15)); 
+        
+        walkInGuest.enqueue(g1);
+        walkInGuest.enqueue(g2);
+        walkInGuest.enqueue(new Guest("Ravi Kumar", "0134567890", GuestType.WALK_IN, "Suite", 3));
+        walkInGuest.enqueue(new Guest("Tan Wei Ming", "0145678901", GuestType.STANDARD_BOOKING, "Deluxe", 2));
+        
+        // pre-populate some "already processed" guests too, so Report 2 has data immediately
+        Guest processed1 = new Guest("Lim Mei Ling", "0156789012", GuestType.WALK_IN, "Single", 1);
+        processed1.setStatus("Registered");
+        processedGuests.add(processed1);
+        
+        Guest processed2 = new Guest("Muthu Raj", "0167890123", GuestType.STANDARD_BOOKING, "Double", 4);
+        processed2.setStatus("Registered");
+        processedGuests.add(processed2);
+    }
+    
     public void registration(){
         int choice;
+                
         do {
+            ScreenUtility.clearScreen();
             choice = walkInUI.getMenuChoice();
             switch(choice){
                 case 0:
@@ -43,7 +76,7 @@ public class WalkInRegistration {
                     getFrontGuest();
                     break;
                 case 5:
-                    generateWaitingQueueReport();
+                    handleReportMenu();
                     break;
                 default:
                     System.out.println("\n Invalid Choice");
@@ -51,11 +84,28 @@ public class WalkInRegistration {
         }while (choice != 0);
     }
     
+    public void handleReportMenu(){
+        int choice = walkInUI.getReportChoice();
+        
+        switch(choice){
+            case 1:
+                GuestType filterGuestType = walkInUI.inputReportFilterChoice();
+                generateWaitingQueueReport(filterGuestType);
+                break;
+            case 2:
+                generateProcessedGuestReport();
+                break;
+            default:
+                walkInUI.displayInvalidChoiceMessage();
+        }
+    }
+    
     // handle walk in guest registration 
     public void registerGuest(){
         Guest newGuest = walkInUI.inputGuestDetails();
         walkInGuest.enqueue(newGuest);
         walkInUI.displayRegistrationSuccess(newGuest);
+        walkInUI.pauseScreen();
     }
     
     // handle 
@@ -82,9 +132,55 @@ public class WalkInRegistration {
         }
     }
     
-    public void generateWaitingQueueReport(){
+    public void generateWaitingQueueReport(GuestType filterType){
         Guest[] items = getQueueItem();
-        sortGuestUtility.sortByArrivalTime(items);
+        if (items.length == 0){
+            walkInUI.displayEmptyQueueMessage();
+            return;
+        }
+        
+        Guest[] reportData;
+        
+        if(filterType == null){
+            reportData = items;
+        }else {
+            reportData = FilterGuestType.filterGuestType(items, filterType);
+        }
+        
+        SortGuestUtility.sortByArrivalTime(reportData);
+        
+        walkInUI.displayWaitingQueueReport(reportData);
+        
+    }
+    
+    public void generateProcessedGuestReport(){
+        if(processedGuests.isEmpty()){
+            walkInUI.displayEmptyProcessedGuestMessage();
+            return;
+        }
+        
+        int choice = walkInUI.inputProcessedReportChoice();
+        
+        if (choice == 1){
+            searchProcessedGuest();
+        } else if (choice == 2){
+            Guest[] items = getProcessedGuestArray();
+            SortGuestUtility.sortByGuestName(items);
+            walkInUI.displayProcessedGuestReport(items);
+        } else{
+            walkInUI.displayInvalidChoiceMessage();
+        }
+    }
+    
+    public void searchProcessedGuest(){
+        String confirmationNumber = walkInUI.inputConfirmationNumber();
+        Guest result = SearchGuestUtility.searchByConfirmationNumber(processedGuests, confirmationNumber);
+        
+        if(result == null){
+            walkInUI.displayGuestNotFound(confirmationNumber);
+        } else {
+            walkInUI.displayGuestFound(result);
+        }
     }
     
     // use for generating report 
@@ -97,13 +193,27 @@ public class WalkInRegistration {
             items[i] = walkInGuest.dequeue();
         }
         
-        // enqueue back the items back to the linked queue after generate the report 
+        // enqueue back the items back to the linked queue (restore back original state)
         for(int i = 0; i < size; i++){
             walkInGuest.enqueue(items[i]);
         }
         
         return items;
     }
+    
+    // handle processed guest array list to array 
+    public Guest[] getProcessedGuestArray(){
+        int size = processedGuests.getNumberOfEntries();
+        Guest[] items = new Guest[size];
+
+        for(int i = 1; i <= size; i++){
+            items[i - 1] = processedGuests.getEntry(i);
+        }
+
+        return items;
+    }
+    
+    
     
     public static void main(String[] args){
         WalkInRegistration registration = new WalkInRegistration();
