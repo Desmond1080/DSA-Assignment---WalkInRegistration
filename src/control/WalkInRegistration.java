@@ -22,6 +22,10 @@ import utility.ScreenUtility;
 import utility.SearchGuestUtility;
 import utility.SortGuestUtility;
 
+/* handle walk-in guests and standard booking guest (book fews day ago or repeat booking) without VIP priority
+handle arrival and request for booking reservation
+*/
+
 public class WalkInRegistration {
     private QueueInterface<Guest> walkInGuest = new LinkedQueue<>();
     private WalkInRegistrationUI walkInUI = new WalkInRegistrationUI();
@@ -76,6 +80,9 @@ public class WalkInRegistration {
                     getFrontGuest();
                     break;
                 case 5:
+                    cancelWalkInRegistration();
+                    break;
+                case 6:
                     handleReportMenu();
                     break;
                 default:
@@ -98,6 +105,54 @@ public class WalkInRegistration {
             default:
                 walkInUI.displayInvalidChoiceMessage();
         }
+    }
+    
+    public void cancelWalkInRegistration(){
+        if(walkInGuest.isEmpty()){
+            walkInUI.displayEmptyQueueMessage();
+            walkInUI.pauseScreen();
+            return;
+        }
+        
+        boolean retry = true;
+        
+        while(retry){
+            String confirmationNumber = walkInUI.inputConfirmationNumber();
+            Guest removed = removeGuestFromQueue(confirmationNumber);
+
+            if(removed != null){
+                walkInUI.displayCancelGuestSuccess(removed);
+                retry = false;
+            } else {
+                walkInUI.displayGuestNotFound(confirmationNumber);
+                retry = walkInUI.promptRetry();
+            }
+        }
+        
+        walkInUI.pauseScreen();
+    }
+    
+    // handle removing from queue 
+    public Guest removeGuestFromQueue(String confirmationNumber){
+        int size = walkInGuest.getNumberOfEntries();
+        Guest[] items = new Guest[size];
+        Guest removed = null;
+        
+        // store guest data from queue to array 
+        for(int i = 0; i < size; i++){
+            items[i] = walkInGuest.dequeue();
+        }
+        
+        for(int i = 0; i < size; i++){
+            if(items[i].getConfirmationNumber().equals(confirmationNumber)){
+                removed = items[i];
+            }else {
+                walkInGuest.enqueue(items[i]);
+            }
+        }
+        
+        return removed;
+        
     }
     
     // handle walk in guest registration 
@@ -185,13 +240,19 @@ public class WalkInRegistration {
     }
     
     public void searchProcessedGuest(){
-        String confirmationNumber = walkInUI.inputConfirmationNumber();
-        Guest result = SearchGuestUtility.searchByConfirmationNumber(processedGuests, confirmationNumber);
+        boolean retry = true;
         
-        if(result == null){
-            walkInUI.displayGuestNotFound(confirmationNumber);
-        } else {
-            walkInUI.displayGuestFound(result);
+        while(retry){
+            String confirmationNumber = walkInUI.inputConfirmationNumber();
+            Guest result = SearchGuestUtility.searchByConfirmationNumber(processedGuests, confirmationNumber);
+
+            if(result == null){
+                walkInUI.displayGuestNotFound(confirmationNumber);
+                retry = walkInUI.promptRetry();
+            } else {
+                walkInUI.displayGuestFound(result);
+                retry = false;
+            }
         }
         walkInUI.pauseScreen();
     }

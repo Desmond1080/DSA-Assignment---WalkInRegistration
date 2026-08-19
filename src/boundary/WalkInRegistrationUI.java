@@ -29,7 +29,8 @@ public class WalkInRegistrationUI {
         System.out.println("2. Process Next Guest ");
         System.out.println("3. View All Guest ");
         System.out.println("4. Get Top Guest ");
-        System.out.println("5. Report");
+        System.out.println("5. Cancel Guest Registration ");
+        System.out.println("6. Report");
         System.out.println("0. Exit.... ");
         
         System.out.print("Enter choice: ");
@@ -86,9 +87,26 @@ public class WalkInRegistrationUI {
         return confirmationNumber;
     }
     
+    
+    // handle retry prompt 
+    public boolean promptRetry(){
+        System.out.println("\n1. Try Again");
+        System.out.println("2. Return to Menu");
+        System.out.print("Enter choice: ");
+        int choice = ValidationUtility.validateIntegerChoice();
+
+        return choice == 1;   // true = keep trying, false (or any other input) = give up
+    }
+    
     // display found guest based on the confirmation number 
     public void displayGuestFound(Guest guest){
         System.out.println("\n===== Guest Found =====");
+        System.out.println(guest);
+    }
+    
+    // handle cancel guest successful 
+    public void displayCancelGuestSuccess(Guest guest){
+        System.out.println("\nRegistration of this Guest have cancelled successfully.");
         System.out.println(guest);
     }
     
@@ -205,12 +223,13 @@ public class WalkInRegistrationUI {
         System.out.println("=============================================================================================================================");
         System.out.println("Current Queue (" + items.length + " guests(s) waiting):"); 
         System.out.println("---------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-4s %-12s %-12s %-18s %-18s %-12s %-16s %-12s %-10s%n","No.", "Confirm No.", "Name", "Contact Number","Guest Type", "Room Type", "Arrival Time","Number of Guests", "Status");
+        System.out.printf("%-4s %-12s %-18s %-14s %-18s %-12s %-20s %-10s %-10s%n",
+                "No.", "Confirm No.", "Name", "Contact No.", "Guest Type", "Room Type", "Arrival Time", "No. Guests", "Status");
         System.out.println("---------------------------------------------------------------------------------------------------------------------------");
-        
+
         for(int i = 0; i < items.length; i++){
             Guest g = items[i];
-            System.out.printf("%-4s %-12s %-18s %-18s %-12s %-16s %-10s%n",
+            System.out.printf("%-4d %-12s %-18s %-14s %-18s %-12s %-20s %-10d %-5s%n",
                     (i + 1),
                     g.getConfirmationNumber(),
                     truncate(g.getName(), 18),
@@ -234,9 +253,9 @@ public class WalkInRegistrationUI {
         System.out.println("=============================================================================================");
         System.out.println("Sorted by: Arrival Time (earliest first)");
         System.out.println("Total Guests: " + guests.length);
-        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------");
         System.out.printf("%-4s %-12s %-18s %-18s %-12s %-16s %-10s%n","No.", "Confirm No.", "Name", "Guest Type", "Room Type", "Arrival Time", "Status");
-        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------");
     
         for(int i = 0; i < guests.length; i++){
             Guest g = guests[i];
