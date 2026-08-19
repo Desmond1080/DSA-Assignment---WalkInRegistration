@@ -122,7 +122,8 @@ public class WalkInRegistration {
     }
     
     public void viewGuestQueue(){
-        walkInUI.displayQueue(walkInGuest.toString(), walkInGuest.getNumberOfEntries());
+        Guest[] items = getQueueItem();
+        walkInUI.displayQueue(items);
         walkInUI.pauseScreen();
     }
     
@@ -166,16 +167,20 @@ public class WalkInRegistration {
         
         int choice = walkInUI.inputProcessedReportChoice();
         
-        if (choice == 1){
-            searchProcessedGuest();
-        } else if (choice == 2){
-            Guest[] items = getProcessedGuestArray();
-            SortGuestUtility.sortByGuestName(items);
-            walkInUI.displayProcessedGuestReport(items);
-            walkInUI.pauseScreen();
-        } else{
-            walkInUI.displayInvalidChoiceMessage();
-            walkInUI.pauseScreen();
+        switch (choice) {
+            case 1:
+                searchProcessedGuest();
+                break;
+            case 2:
+                Guest[] items = getProcessedGuestArray();
+                SortGuestUtility.sortByGuestName(items);
+                walkInUI.displayProcessedGuestReport(items);
+                walkInUI.pauseScreen();
+                break;
+            default:
+                walkInUI.displayInvalidChoiceMessage();
+                walkInUI.pauseScreen();
+                break;
         }
     }
     
@@ -219,12 +224,5 @@ public class WalkInRegistration {
         }
 
         return items;
-    }
-    
-    
-    
-    public static void main(String[] args){
-        WalkInRegistration registration = new WalkInRegistration();
-        registration.registration();
     }
 }

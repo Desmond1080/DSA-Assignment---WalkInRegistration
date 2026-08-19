@@ -14,6 +14,7 @@ import Entity.Guest.GuestType;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Scanner;
+import utility.ValidationUtility;
 
 public class WalkInRegistrationUI {
     
@@ -32,7 +33,7 @@ public class WalkInRegistrationUI {
         System.out.println("0. Exit.... ");
         
         System.out.print("Enter choice: ");
-        int choice = validateIntegerChoice();
+        int choice = ValidationUtility.validateIntegerChoice();
         return choice;
     }
     
@@ -42,7 +43,7 @@ public class WalkInRegistrationUI {
         System.out.println("2. Generate Processed Guest Report ");
         
         System.out.print("Enter choice: ");
-        int choice = validateIntegerChoice();
+        int choice = ValidationUtility.validateIntegerChoice();
         return choice;
     }
     
@@ -53,7 +54,7 @@ public class WalkInRegistrationUI {
         System.out.println("2. Walk-In Only");
         System.out.println("3. Standard Booking Only");
         System.out.print("Enter choice: ");
-        int choice = validateIntegerChoice();
+        int choice = ValidationUtility.validateIntegerChoice();
         
         if(choice ==2) return GuestType.WALK_IN;
         if(choice ==3) return GuestType.STANDARD_BOOKING;
@@ -67,7 +68,7 @@ public class WalkInRegistrationUI {
         System.out.println("1. Search Guest by Confirmation Number");
         System.out.println("2. View All Processed Guests (sorted by name)");
         System.out.print("Enter choice: ");
-        return validateIntegerChoice();
+        return ValidationUtility.validateIntegerChoice();
     }
     
     // input confirmation number for processed guest 
@@ -144,7 +145,7 @@ public class WalkInRegistrationUI {
         int n;
         do{
             System.out.print("Enter Number Of Guests: ");
-            n = validateIntegerChoice();
+            n = ValidationUtility.validateIntegerChoice();
             if(n <= 0){
                 System.out.println("Number of guests must be at least 1.");
             }
@@ -174,7 +175,7 @@ public class WalkInRegistrationUI {
             System.out.println("1. Walk-In");
             System.out.println("2. Standard Booking");
             System.out.print("Enter choice : ");
-            choice = validateIntegerChoice();
+            choice = ValidationUtility.validateIntegerChoice();
 
             if(choice != 1 && choice != 2){
                 System.out.println("Invalid choice. Please select 1 or 2.");
@@ -198,9 +199,28 @@ public class WalkInRegistrationUI {
         System.out.println(servedGuest);
     }
     
-    public void displayQueue(String queueDetails, int numberOfGuests){
-        System.out.println("Current Queue (" + numberOfGuests + " guests(s) waiting):"); 
-        System.out.println(queueDetails);
+    public void displayQueue(Guest[] items){
+        System.out.println("\n===========================================================================================================================");
+        System.out.println("                            CURRENT GUEST WAITING QUEUE ");
+        System.out.println("=============================================================================================================================");
+        System.out.println("Current Queue (" + items.length + " guests(s) waiting):"); 
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-4s %-12s %-12s %-18s %-18s %-12s %-16s %-12s %-10s%n","No.", "Confirm No.", "Name", "Contact Number","Guest Type", "Room Type", "Arrival Time","Number of Guests", "Status");
+        System.out.println("---------------------------------------------------------------------------------------------------------------------------");
+        
+        for(int i = 0; i < items.length; i++){
+            Guest g = items[i];
+            System.out.printf("%-4s %-12s %-18s %-18s %-12s %-16s %-10s%n",
+                    (i + 1),
+                    g.getConfirmationNumber(),
+                    truncate(g.getName(), 18),
+                    g.getContactNumber(),
+                    g.getGuestTypeDisplay(),
+                    g.getRequestedRoomType(),
+                    g.getArrivalDateTime().format(DATE_TIME_FORMAT),
+                    g.getNumberOfGuests(),
+                    g.getStatus());
+        }
     }
     
     public void displayNextGuest(Guest nextGuest){
@@ -209,9 +229,9 @@ public class WalkInRegistrationUI {
     }
     
     public void displayWaitingQueueReport(Guest[] guests){
-        System.out.println("\n===========================================================================================");
+        System.out.println("\n=============================================================================================");
         System.out.println("                         WALK-IN GUEST WAITING QUEUE REPORT");
-        System.out.println("===========================================================================================");
+        System.out.println("=============================================================================================");
         System.out.println("Sorted by: Arrival Time (earliest first)");
         System.out.println("Total Guests: " + guests.length);
         System.out.println("-------------------------------------------------------------------------------------------");
@@ -230,20 +250,20 @@ public class WalkInRegistrationUI {
                     g.getStatus());
         }
 
-        System.out.println("===========================================================================================");
+        System.out.println("=============================================================================================");
     }
     
     
     public void displayProcessedGuestReport(Guest[] guests){
-        System.out.println("\n===================================================================================");
+        System.out.println("\n=============================================================================================");
         System.out.println("                            PROCESSED GUEST REPORT");
-        System.out.println("===================================================================================");
+        System.out.println("=============================================================================================");
         System.out.println("Sorted by: Name (A-Z)");
         System.out.println("Total Guests: " + guests.length);
-        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------");
         System.out.printf("%-4s %-12s %-18s %-15s %-12s %-16s %-10s%n",
                 "No.", "Confirm No.", "Name", "Guest Type", "Room Type", "Arrival Time", "Status");
-        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.println("---------------------------------------------------------------------------------------------");
 
         for(int i = 0; i < guests.length; i++){
             Guest g = guests[i];
@@ -257,17 +277,7 @@ public class WalkInRegistrationUI {
                     g.getStatus());
         }
 
-        System.out.println("===================================================================================");
-    }
-    
-    public int validateIntegerChoice(){
-        while(!scanner.hasNextInt()){
-             System.out.println("Invalid integer input. please enter a number: ");
-             scanner.next();
-       }
-        int choice = scanner.nextInt();
-        scanner.nextLine();
-        return choice;
+        System.out.println("=============================================================================================");
     }
     
     public void pauseScreen(){
