@@ -11,6 +11,7 @@ package boundary;
 
 import Entity.Guest;
 import Entity.Guest.GuestType;
+import Entity.Guest.RoomType;
 import java.time.format.DateTimeFormatter;
 
 import java.util.Scanner;
@@ -134,7 +135,7 @@ public class WalkInRegistrationUI {
         
         GuestType guestType = inputGuestType();
         
-        String roomType = validateEmptyField("Enter Guest Room Type: ");
+        RoomType roomType = inputRoomType();
         
         int numberOfGuests = inputNumberOfGuest();
         
@@ -184,6 +185,32 @@ public class WalkInRegistrationUI {
         }while(!contactNumber.matches("[0-9]{9,11}"));
         
         return contactNumber;
+    }
+    
+    public RoomType inputRoomType(){
+        int choice;
+        do{
+            System.out.println("\n===== Select Room Type =====");
+            System.out.println("1. Deluxe ");
+            System.out.println("2. Standard ");
+            System.out.println("3. Suite ");
+            System.out.println("4. Family ");
+            choice = ValidationUtility.validateIntegerChoice();
+            
+            if(!(choice >= 1 && choice <= 4)){
+                System.out.println("Invalid choice. Please select 1 to 4.");
+            }
+        } while(!(choice >= 1 && choice <= 4));
+        
+        if(choice == 2){
+            return RoomType.STANDARD;
+        } else if(choice == 3){
+            return RoomType.SUITE;
+        } else if(choice == 4){
+            return RoomType.FAMILY;
+        } else {
+            return RoomType.DELUXE;
+        }
     }
     
     public GuestType inputGuestType(){

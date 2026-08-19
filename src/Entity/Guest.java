@@ -20,7 +20,7 @@ public class Guest {
     private String name;
     private String contactNumber;
     private GuestType guestType; // walk-in or standard-registration
-    private String requestedRoomType; // 501-single, double, queen etc 
+    private RoomType requestedRoomType; // 501-single, double, queen etc 
     private int numberOfGuests;
     private String status; // waiting, registered, assigned
     private LocalDateTime arrivalDateTime; 
@@ -32,8 +32,15 @@ public class Guest {
         STANDARD_BOOKING
     }
     
+    public enum RoomType{
+        DELUXE,
+        STANDARD,
+        SUITE,
+        FAMILY
+    }
+    
     // variable value constructor
-    public Guest(String name, String contactNumber, GuestType guestType, String requestedRoomType, int numberOfGuests){
+    public Guest(String name, String contactNumber, GuestType guestType, RoomType requestedRoomType, int numberOfGuests){
         count++;
         this.confirmationNumber = String.format("%08d", count);
         this.name = name;
@@ -62,7 +69,7 @@ public class Guest {
         return guestType;
     }
     
-    public String getRequestedRoomType(){
+    public RoomType getRequestedRoomType(){
         return requestedRoomType;
     }
     
@@ -92,7 +99,7 @@ public class Guest {
         this.guestType = guestType;
     }
     
-    public void setRequestedRoomType(String roomType){
+    public void setRequestedRoomType(RoomType roomType){
         this.requestedRoomType = roomType;
     }
     

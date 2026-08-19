@@ -9,8 +9,10 @@ package main;
  * @author Desmond
  */
 
+import boundary.LoyaltyAndRewardsUI;
 import control.WalkInRegistration;
 import boundary.WalkInRegistrationUI;
+import control.LoyaltyAndRewardsControl;
 import control.WalkInRegistration;
 import utility.ValidationUtility;
 
@@ -34,10 +36,11 @@ public class MainMenu {
                     walkInRegistration.registration();
                     break;
                 case 2:
-                    System.out.println("yet to integrate housekeeping");
+                    System.out.println("yet to integrated");
                     break;
                 case 3:
-                    System.out.println("yet to integrate loyalty point");
+                    LoyaltyAndRewardsUI loyalty = new LoyaltyAndRewardsUI();
+                    loyalty.startMenu();
                     break;
                 default:
                     System.out.println("Invalid choice. Please enter again!!");

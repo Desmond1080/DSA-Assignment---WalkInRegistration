@@ -14,6 +14,7 @@ import adt.LinkedQueue;
 import boundary.WalkInRegistrationUI;
 import Entity.Guest;
 import Entity.Guest.GuestType;
+import Entity.Guest.RoomType;
 import adt.ArrayList;
 import adt.ListInterface;
 import java.time.LocalDateTime;
@@ -36,23 +37,23 @@ public class WalkInRegistration {
     }
     
     private void loadDummyData(){
-        Guest g1 = new Guest("Ali Bin Ahmad", "0123456789", GuestType.WALK_IN, "Single", 1);
+        Guest g1 = new Guest("Ali Bin Ahmad", "0123456789", GuestType.WALK_IN, Guest.RoomType.DELUXE, 1);
         g1.setArrivalDateTime(LocalDateTime.now().minusMinutes(30));  
 
-        Guest g2 = new Guest("Siti Nurhaliza", "0198765432", GuestType.STANDARD_BOOKING, "Double", 2);
+        Guest g2 = new Guest("Siti Nurhaliza", "0198765432", GuestType.STANDARD_BOOKING, RoomType.DELUXE, 2);
         g2.setArrivalDateTime(LocalDateTime.now().minusMinutes(15)); 
         
         walkInGuest.enqueue(g1);
         walkInGuest.enqueue(g2);
-        walkInGuest.enqueue(new Guest("Ravi Kumar", "0134567890", GuestType.WALK_IN, "Suite", 3));
-        walkInGuest.enqueue(new Guest("Tan Wei Ming", "0145678901", GuestType.STANDARD_BOOKING, "Deluxe", 2));
+        walkInGuest.enqueue(new Guest("Ravi Kumar", "0134567890", GuestType.WALK_IN, RoomType.FAMILY, 3));
+        walkInGuest.enqueue(new Guest("Tan Wei Ming", "0145678901", GuestType.STANDARD_BOOKING, RoomType.DELUXE, 2));
         
         // pre-populate some "already processed" guests too, so Report 2 has data immediately
-        Guest processed1 = new Guest("Lim Mei Ling", "0156789012", GuestType.WALK_IN, "Single", 1);
+        Guest processed1 = new Guest("Lim Mei Ling", "0156789012", GuestType.WALK_IN, RoomType.DELUXE, 1);
         processed1.setStatus("Registered");
         processedGuests.add(processed1);
         
-        Guest processed2 = new Guest("Muthu Raj", "0167890123", GuestType.STANDARD_BOOKING, "Double", 4);
+        Guest processed2 = new Guest("Muthu Raj", "0167890123", GuestType.STANDARD_BOOKING, RoomType.DELUXE, 4);
         processed2.setStatus("Registered");
         processedGuests.add(processed2);
     }

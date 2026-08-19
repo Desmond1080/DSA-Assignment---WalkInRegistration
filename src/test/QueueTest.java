@@ -11,6 +11,7 @@ package test;
 
 import Entity.Guest;
 import Entity.Guest.GuestType;
+import Entity.Guest.RoomType;
 import adt.QueueInterface;
 import adt.LinkedQueue;
 
@@ -23,9 +24,9 @@ public class QueueTest {
         System.out.println("Is queue empty? " + walkInQueue.isEmpty());  // expect: true
         
         // 2. Create and enqueue a few guests
-        Guest g1 = new Guest("Ali", "0123456789", GuestType.WALK_IN, "Single", 1);
-        Guest g2 = new Guest("Siti", "0198765432", GuestType.STANDARD_BOOKING, "Double", 2);
-        Guest g3 = new Guest("Ravi", "0134567890", GuestType.WALK_IN, "Suite", 3);
+        Guest g1 = new Guest("Ali", "0123456789", GuestType.WALK_IN, RoomType.DELUXE, 1);
+        Guest g2 = new Guest("Siti", "0198765432", GuestType.STANDARD_BOOKING, RoomType.FAMILY, 2);
+        Guest g3 = new Guest("Ravi", "0134567890", GuestType.WALK_IN, RoomType.DELUXE, 1);
         
         walkInQueue.enqueue(g1);
         walkInQueue.enqueue(g2);
