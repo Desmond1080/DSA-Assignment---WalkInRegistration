@@ -108,6 +108,14 @@ public class Guest {
         this.arrivalDateTime = arrivalDateTime;
     }
     
+    public String getGuestTypeDisplay(){
+        if(guestType == GuestType.WALK_IN){
+            return "Walk-In";
+        } else {
+            return "Standard";
+        }
+    }
+    
     // to String method 
     @Override
     public String toString(){

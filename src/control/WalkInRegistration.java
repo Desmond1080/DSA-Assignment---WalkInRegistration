@@ -118,10 +118,12 @@ public class WalkInRegistration {
             processedGuests.add(servedGuest); // add the served Guest to the array list 
             walkInUI.displayServedGuest(servedGuest);
         }
+        walkInUI.pauseScreen();
     }
     
     public void viewGuestQueue(){
         walkInUI.displayQueue(walkInGuest.toString(), walkInGuest.getNumberOfEntries());
+        walkInUI.pauseScreen();
     }
     
     public void getFrontGuest(){
@@ -130,6 +132,7 @@ public class WalkInRegistration {
         } else {
             walkInUI.displayNextGuest(walkInGuest.getFront());
         }
+        walkInUI.pauseScreen();
     }
     
     public void generateWaitingQueueReport(GuestType filterType){
@@ -151,11 +154,13 @@ public class WalkInRegistration {
         
         walkInUI.displayWaitingQueueReport(reportData);
         
+        walkInUI.pauseScreen();
     }
     
     public void generateProcessedGuestReport(){
         if(processedGuests.isEmpty()){
             walkInUI.displayEmptyProcessedGuestMessage();
+            walkInUI.pauseScreen();
             return;
         }
         
@@ -167,8 +172,10 @@ public class WalkInRegistration {
             Guest[] items = getProcessedGuestArray();
             SortGuestUtility.sortByGuestName(items);
             walkInUI.displayProcessedGuestReport(items);
+            walkInUI.pauseScreen();
         } else{
             walkInUI.displayInvalidChoiceMessage();
+            walkInUI.pauseScreen();
         }
     }
     
@@ -181,6 +188,7 @@ public class WalkInRegistration {
         } else {
             walkInUI.displayGuestFound(result);
         }
+        walkInUI.pauseScreen();
     }
     
     // use for generating report 

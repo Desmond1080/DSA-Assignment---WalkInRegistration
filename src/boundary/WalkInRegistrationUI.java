@@ -72,8 +72,17 @@ public class WalkInRegistrationUI {
     
     // input confirmation number for processed guest 
     public String inputConfirmationNumber(){
-        System.out.print("Enter 8 digit confirmation number (e.g., 00000001): ");
-        return scanner.nextLine();
+        String confirmationNumber;
+        do {
+            System.out.print("Enter 8-digit confirmation number (e.g., 00000001): ");
+            confirmationNumber = scanner.nextLine().trim();
+
+            if(!confirmationNumber.matches("[0-9]{8}")){
+                System.out.println("Invalid format. Confirmation number must be exactly 8 digits.");
+            }
+        } while(!confirmationNumber.matches("[0-9]{8}"));
+
+        return confirmationNumber;
     }
     
     // display found guest based on the confirmation number 
@@ -100,19 +109,15 @@ public class WalkInRegistrationUI {
     }
     
     public Guest inputGuestDetails(){
-        System.out.print("Enter Guest Name: ");
-        String name = scanner.nextLine();
+        String name = inputGuestName();
         
-        System.out.print("Enter Guest Contact Number: ");
-        String contactNumber = scanner.nextLine();
+        String contactNumber = inputContactNumber();
         
         GuestType guestType = inputGuestType();
         
-        System.out.print("Enter Guest Room Type: ");
-        String roomType = scanner.nextLine();
+        String roomType = validateEmptyField("Enter Guest Room Type: ");
         
-        System.out.print("Enter Number of Guests: ");
-        int numberOfGuests = validateIntegerChoice();
+        int numberOfGuests = inputNumberOfGuest();
         
         System.out.println();
          
@@ -120,18 +125,67 @@ public class WalkInRegistrationUI {
         
     }
     
-    public GuestType inputGuestType(){
-        System.out.println("\n===== Select Guest Type =====");
-        System.out.println("1. Walk-In");
-        System.out.println("2. Standard Booking");
-        System.out.print("Enter choice : ");
-        int choice = validateIntegerChoice();
+    public String inputGuestName(){
+        String name;
+        do{
+            System.out.print("Enter Guest Name: ");
+            name = scanner.nextLine().trim();
+            if(name.isEmpty()){
+                System.out.println("Name cannot be empty.");
+            }else if (name.length() > 50){
+                System.out.println("Name is too long. Please limit to 50 characters.");
+            }
+        }while(name.isEmpty() || name.length()>50);
         
-        if (choice == 2){
+        return name;
+    }
+    
+    public int inputNumberOfGuest(){
+        int n;
+        do{
+            System.out.print("Enter Number Of Guests: ");
+            n = validateIntegerChoice();
+            if(n <= 0){
+                System.out.println("Number of guests must be at least 1.");
+            }
+            
+        }while(n <= 0);
+        return n;
+    }
+    
+    public String inputContactNumber(){
+        String contactNumber;
+        do{
+            System.out.print("Enter Guest Contact Number: ");
+            contactNumber = scanner.nextLine().trim();
+            
+            if(!contactNumber.matches("[0-9]{9,11}")){
+                System.out.println("Invalid Contact Number. Please enter 9-11 digits only.");
+            }
+        }while(!contactNumber.matches("[0-9]{9,11}"));
+        
+        return contactNumber;
+    }
+    
+    public GuestType inputGuestType(){
+        int choice;
+        do {
+            System.out.println("\n===== Select Guest Type =====");
+            System.out.println("1. Walk-In");
+            System.out.println("2. Standard Booking");
+            System.out.print("Enter choice : ");
+            choice = validateIntegerChoice();
+
+            if(choice != 1 && choice != 2){
+                System.out.println("Invalid choice. Please select 1 or 2.");
+            }
+        } while(choice != 1 && choice != 2);
+
+        if(choice == 2){
             return GuestType.STANDARD_BOOKING;
         }
-        
         return GuestType.WALK_IN;
+
     }
     
     public void displayRegistrationSuccess(Guest newGuest){
@@ -155,22 +209,22 @@ public class WalkInRegistrationUI {
     }
     
     public void displayWaitingQueueReport(Guest[] guests){
-        System.out.println("\n=========================================================================================");
+        System.out.println("\n===========================================================================================");
         System.out.println("                         WALK-IN GUEST WAITING QUEUE REPORT");
-        System.out.println("============================================================================================");
+        System.out.println("===========================================================================================");
         System.out.println("Sorted by: Arrival Time (earliest first)");
         System.out.println("Total Guests: " + guests.length);
-        System.out.println("-----------------------------------------------------------------------------------");
-        System.out.printf("%-4s %-12s %-18s %-15s %-12s %-16s %-10s%n","No.", "Confirm No.", "Name", "Guest Type", "Room Type", "Arrival Time", "Status");
-        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------------------");
+        System.out.printf("%-4s %-12s %-18s %-18s %-12s %-16s %-10s%n","No.", "Confirm No.", "Name", "Guest Type", "Room Type", "Arrival Time", "Status");
+        System.out.println("-------------------------------------------------------------------------------------------");
     
         for(int i = 0; i < guests.length; i++){
             Guest g = guests[i];
-            System.out.printf("%-4d %-12s %-18s %-15s %-12s %-16s %-10s%n",
+            System.out.printf("%-4s %-12s %-18s %-18s %-12s %-16s %-10s%n",
                     (i + 1),
                     g.getConfirmationNumber(),
-                    g.getName(),
-                    g.getGuestType(),
+                    truncate(g.getName(), 18),
+                    g.getGuestTypeDisplay(),
                     g.getRequestedRoomType(),
                     g.getArrivalDateTime().format(DATE_TIME_FORMAT),
                     g.getStatus());
@@ -186,18 +240,18 @@ public class WalkInRegistrationUI {
         System.out.println("===================================================================================");
         System.out.println("Sorted by: Name (A-Z)");
         System.out.println("Total Guests: " + guests.length);
-        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------------------");
         System.out.printf("%-4s %-12s %-18s %-15s %-12s %-16s %-10s%n",
                 "No.", "Confirm No.", "Name", "Guest Type", "Room Type", "Arrival Time", "Status");
-        System.out.println("-----------------------------------------------------------------------------------");
+        System.out.println("-------------------------------------------------------------------------------------------");
 
         for(int i = 0; i < guests.length; i++){
             Guest g = guests[i];
-            System.out.printf("%-4d %-12s %-18s %-15s %-12s %-16s %-10s%n",
+            System.out.printf("%-4s %-12s %-18s %-15s %-12s %-16s %-10s%n",
                     (i + 1),
                     g.getConfirmationNumber(),
-                    g.getName(),
-                    g.getGuestType(),
+                    truncate(g.getName(), 18),
+                    g.getGuestTypeDisplay(),
                     g.getRequestedRoomType(),
                     g.getArrivalDateTime().format(DATE_TIME_FORMAT),
                     g.getStatus());
@@ -219,5 +273,28 @@ public class WalkInRegistrationUI {
     public void pauseScreen(){
         System.out.println("\nPress Enter to continue...");
         scanner.nextLine();
+    }
+    
+    // handle maximum character of the report, if over the limit show (....)
+    public String truncate(String text, int maxLength){
+        if(text.length() > maxLength){
+            return text.substring(0, maxLength -3) + "...";
+        }
+        
+        return text;
+    }
+    
+    // validate the text field cannot be empty 
+    public String validateEmptyField(String text){
+        String input;
+        do{
+            System.out.print(text);
+            input = scanner.nextLine().trim();
+            if(input.isEmpty()){
+                System.out.println("Input field cannot be empty. Please fill in value!!");
+            }
+        }while(input.isEmpty());
+        
+        return input;
     }
 }
