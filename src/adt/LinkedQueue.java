@@ -35,7 +35,7 @@ public class LinkedQueue<T> implements QueueInterface<T> {
         
         lastNode = newNode;
     }
-
+    
     @Override
     public T dequeue() {
         T front = null;

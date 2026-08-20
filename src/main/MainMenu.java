@@ -9,9 +9,12 @@ package main;
  * @author Desmond
  */
 
+import boundary.HousekeepingUI;
 import boundary.LoyaltyAndRewardsUI;
 import control.WalkInRegistration;
 import boundary.WalkInRegistrationUI;
+import control.HousekeepingControl;
+import control.HousekeepingReportControl;
 import control.LoyaltyAndRewardsControl;
 import control.WalkInRegistration;
 import utility.ValidationUtility;
@@ -36,7 +39,10 @@ public class MainMenu {
                     walkInRegistration.registration();
                     break;
                 case 2:
-                    System.out.println("yet to integrated");
+                    HousekeepingControl control = new HousekeepingControl(); /* Create rooms, staff and dummy tasks */
+                    HousekeepingReportControl reports = new HousekeepingReportControl(control); /* Receive same control object to read task information*/
+                    HousekeepingUI ui = new HousekeepingUI(control, reports); /* Receieve two controller */
+                    ui.run();
                     break;
                 case 3:
                     LoyaltyAndRewardsUI loyalty = new LoyaltyAndRewardsUI();
