@@ -1,81 +1,53 @@
-DSA Assignment - Walk-In Registration System
-============================================
+# DSA Assignment - Walk-In Registration
 
-Project Overview
-----------------
-This project is a console-based Java application for managing walk-in and standard-booking guest registration in a resort/hotel setting.
+## Overview
+This is a console-based Java resort system built for a Data Structures and Algorithms assignment.  
+The project currently includes:
+- **Walk-In / Standard Booking Registration** module
+- **Loyalty & Rewards** module
 
-It supports:
-- Registering new guests
-- Managing a waiting queue (FIFO)
-- Processing the next guest
-- Cancelling guest registration by confirmation number
-- Generating queue and processed-guest reports
+## Main Features
 
-Main implementation is in:
-- /home/runner/work/DSA-Assignment---WalkInRegistration/DSA-Assignment---WalkInRegistration/src/control/WalkInRegistration.java
+### Walk-In / Standard Booking Registration
+- Register walk-in and standard-booking guests
+- Manage guest queue using FIFO processing
+- Process next guest registration
+- Cancel registration by confirmation number
+- Generate waiting queue and processed guest reports
 
-Data Structures Used
---------------------
-1. Linked Queue (custom)
-   - File: src/adt/LinkedQueue.java
-   - Used for waiting guest queue (FIFO behavior)
+### Loyalty & Rewards
+- View member profile
+- Add points to member accounts
+- Queue redemption requests
+- Process next redemption request
+- Generate member ranking and tier roster reports
 
-2. Array List (custom)
-   - File: src/adt/ArrayList.java
-   - Used to store processed/registered guests
+## Data Structures Used
+- `LinkedQueue` (custom): waiting queue for guests
+- `ArrayQueue` (custom): redemption request queue
+- `ArrayList` (custom): processed guest storage
 
-Core Modules
-------------
-- Entity:
-  - Guest model and GuestType enum
-  - File: src/Entity/Guest.java
+## Project Structure
+- `src/main/MainMenu.java` - application entry point
+- `src/control/WalkInRegistration.java` - walk-in registration logic
+- `src/control/LoyaltyAndRewardsControl.java` - loyalty business logic
+- `src/boundary/` - console UI classes
+- `src/adt/` - custom ADT implementations
+- `src/utility/` - search, sort, validation, and filter helpers
 
-- Boundary (UI):
-  - Console input/output handling
-  - File: src/boundary/WalkInRegistrationUI.java
+## Requirements
+- JDK 20
+- Apache Ant
 
-- Control:
-  - Main business logic for registration workflow
-  - File: src/control/WalkInRegistration.java
+## Build and Run
+From the project root:
 
-- Utility:
-  - Search by confirmation number
-  - Sorting by arrival time / guest name
-  - Input validation helpers
+```bash
+ant clean jar
+ant run
+```
 
-Program Entry Point
--------------------
-- Main class: main.MainMenu
-- File: src/main/MainMenu.java
-
-Requirements
-------------
-- JDK 20 (project is configured with source/target 20)
-- Apache Ant (NetBeans project format)
-
-How to Build and Run
---------------------
-Using Ant:
-1. Open terminal in project root.
-2. Build:
-   ant clean jar
-3. Run:
-   ant run
-
-Main Features
--------------
-1. Register Walk-In Guest
-2. Process Next Guest
-3. View All Guest Queue
-4. View Top/Front Guest
-5. Cancel Guest Registration
-6. Reports:
-   - Current waiting queue report (filter by guest type)
-   - Processed guest report (search/sorted view)
-
-Notes
------
-- Confirmation numbers are auto-generated as 8-digit values.
-- Queue is preloaded with dummy data for demonstration/testing.
-- Housekeeping and Loyalty modules are placeholders in MainMenu.
+## Test
+```bash
+ant test
+```
