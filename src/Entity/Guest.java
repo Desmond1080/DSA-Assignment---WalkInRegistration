@@ -123,6 +123,20 @@ public class Guest {
         }
     }
     
+    public static int getMaximumCapacity(RoomType roomType){
+        switch(roomType){
+            case DELUXE:
+            case STANDARD:
+                return 2;
+            case SUITE:
+                return 4;
+            case FAMILY:
+                return 6;
+            default:
+                return 2;
+        }
+    }
+    
     // to String method 
     @Override
     public String toString(){

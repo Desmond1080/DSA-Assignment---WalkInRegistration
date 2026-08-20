@@ -169,10 +169,14 @@ public class WalkInRegistration {
         if(walkInGuest.isEmpty()){
             walkInUI.displayEmptyQueueMessage();
         } else {
-            Guest servedGuest = walkInGuest.dequeue();
-            servedGuest.setStatus("Registered");
-            processedGuests.add(servedGuest); // add the served Guest to the array list 
-            walkInUI.displayServedGuest(servedGuest);
+            if(walkInUI.confirmationProcessedNextGuest()){
+                Guest servedGuest = walkInGuest.dequeue();
+                servedGuest.setStatus("Registered");
+                processedGuests.add(servedGuest); // add the served Guest to the array list 
+                walkInUI.displayServedGuest(servedGuest);
+            } else {
+                System.out.println("Process cancelled. Guest remain in the queue.");
+            }
         }
         walkInUI.pauseScreen();
     }
