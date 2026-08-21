@@ -1,6 +1,8 @@
+/**
+ * Author: Law Tian Xiang
+ * 
+ */
 package adt;
-
-import adt.QueueInterface;
 
 public class ArrayQueue<T> implements QueueInterface<T> {
     private T[] array;
@@ -33,21 +35,25 @@ public class ArrayQueue<T> implements QueueInterface<T> {
     @Override
     public T dequeue() {
         T front = null;
+        
         if (!isEmpty()) {
             front = array[frontIndex];
             array[frontIndex] = null;
             frontIndex = (frontIndex + 1) % array.length;
             numberOfEntries--;
         }
+        
         return front;
     }
 
     @Override
     public T getFront() {
         T front = null;
+        
         if (!isEmpty()) {
             front = array[frontIndex];
         }
+        
         return front;
     }
 

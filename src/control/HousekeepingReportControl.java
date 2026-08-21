@@ -4,18 +4,22 @@ import Entity.HousekeepingTask;
 import Entity.HousekeepingTask.RoomStatus;
 
 /**
+ * 
  *
  * @author shujuntan
  */
 
+//Filters, aggregates, sorts and formats the two housekeeping reports.
 public class HousekeepingReportControl {
 
     private final HousekeepingControl control;
 
+    /* Uses the existing control so reports read the same task records. */
     public HousekeepingReportControl(HousekeepingControl control) {
         this.control = control;
     }
 
+    /* Filters tasks by floor and status before sorting the matching rows. */
     public String generateRoomStatusReport(int floor, int statusNumber) {
         RoomStatus status = null;
         RoomStatus[] values = RoomStatus.values();
@@ -36,8 +40,8 @@ public class HousekeepingReportControl {
             HousekeepingTask task = control.getTaskForReport(i);
 
             boolean floorMatches = floor == 0 || task.getFloor() == floor;
-            boolean statusMatches =
-                    status == null || task.getCurrentStatus() == status;
+            boolean statusMatches
+                    = status == null || task.getCurrentStatus() == status;
 
             if (floorMatches && statusMatches) {
                 rows[size] = task;
@@ -47,16 +51,14 @@ public class HousekeepingReportControl {
 
         sortTasks(rows, size);
 
-        StringBuilder output =
-                new StringBuilder("\nROOM STATUS MANAGEMENT REPORT\n");
+        StringBuilder output
+                = new StringBuilder("\nROOM STATUS MANAGEMENT REPORT\n");
 
         output.append("Filters: floor=")
                 .append(floor == 0 ? "ALL" : floor)
                 .append(", status=")
                 .append(status == null ? "ALL" : status)
                 .append('\n');
-
-        output.append("Algorithm: linear filter + insertion sort\n");
 
         output.append(String.format(
                 "%-7s %-8s %-11s %-25s %-16s%n",
@@ -79,6 +81,7 @@ public class HousekeepingReportControl {
         return output.toString();
     }
 
+    /* Aggregates task totals by staff, applies filters and sorts the results. */
     public String generateStaffTaskSummaryReport(
             String filter,
             int taskRecordFilter) {
@@ -93,11 +96,11 @@ public class HousekeepingReportControl {
         int allSize = 0;
 
         for (int i = 0; i < total; i++) {
-            HousekeepingTask task =
-                    control.getTaskForReport(i);
+            HousekeepingTask task
+                    = control.getTaskForReport(i);
 
-            String staffId =
-                    task.getAssignedStaffId();
+            String staffId
+                    = task.getAssignedStaffId();
 
             int index = findStaff(
                     allRows,
@@ -105,8 +108,8 @@ public class HousekeepingReportControl {
                     staffId);
 
             if (index < 0) {
-                allRows[allSize] =
-                        new StaffRow(
+                allRows[allSize]
+                        = new StaffRow(
                                 staffId,
                                 control.getStaffNameForReport(
                                         staffId));
@@ -118,28 +121,31 @@ public class HousekeepingReportControl {
             allRows[index].include(task);
         }
 
-        String wanted =
-                filter == null || filter.trim().isEmpty()
-                        ? "ALL"
-                        : filter.trim().toUpperCase();
+        String wanted
+                = filter == null || filter.trim().isEmpty()
+                ? "ALL"
+                : filter.trim().toUpperCase();
 
-        StaffRow[] matches =
-                new StaffRow[allSize];
+        StaffRow[] matches
+                = new StaffRow[allSize];
 
         int matchCount = 0;
 
         for (int i = 0; i < allSize; i++) {
-            boolean staffMatches =
-                    wanted.equals("ALL")
+            boolean staffMatches
+                    = wanted.equals("ALL")
                     || allRows[i].staffId
                             .equalsIgnoreCase(wanted);
 
-            boolean recordMatches =
-                    switch (taskRecordFilter) {
-                        case 1 -> allRows[i].active > 0;
-                        case 2 -> allRows[i].completed > 0;
-                        default -> true;
-                    };
+            boolean recordMatches
+                    = switch (taskRecordFilter) {
+                case 1 ->
+                    allRows[i].active > 0;
+                case 2 ->
+                    allRows[i].completed > 0;
+                default ->
+                    true;
+            };
 
             if (staffMatches && recordMatches) {
                 matches[matchCount] = allRows[i];
@@ -149,8 +155,8 @@ public class HousekeepingReportControl {
 
         sortStaff(matches, matchCount);
 
-        StringBuilder output =
-                new StringBuilder(
+        StringBuilder output
+                = new StringBuilder(
                         "\nSTAFF TASK SUMMARY REPORT\n");
 
         output.append("Filters: staff=")
@@ -159,10 +165,6 @@ public class HousekeepingReportControl {
                 .append(taskRecordFilterName(
                         taskRecordFilter))
                 .append('\n');
-
-        output.append(
-                "Algorithm: linear aggregation/filter "
-                + "+ insertion sort\n");
 
         output.append(String.format(
                 "%-10s %-20s %8s %8s %9s %10s%n",
@@ -187,12 +189,16 @@ public class HousekeepingReportControl {
             int taskRecordFilter) {
 
         return switch (taskRecordFilter) {
-            case 1 -> "HAS ACTIVE TASK";
-            case 2 -> "HAS COMPLETED TASK";
-            default -> "ALL";
+            case 1 ->
+                "HAS ACTIVE TASK";
+            case 2 ->
+                "HAS COMPLETED TASK";
+            default ->
+                "ALL";
         };
     }
 
+    /* Uses insertion sort to place each task into the sorted left section. */
     private void sortTasks(
             HousekeepingTask[] rows,
             int size) {
@@ -212,12 +218,13 @@ public class HousekeepingReportControl {
         }
     }
 
+    /* Orders tasks by status priority, scheduled time and then room number. */
     private int compareTask(
             HousekeepingTask first,
             HousekeepingTask second) {
 
-        int result =
-                priority(first.getCurrentStatus())
+        int result
+                = priority(first.getCurrentStatus())
                 - priority(second.getCurrentStatus());
 
         if (result != 0) {
@@ -238,13 +245,18 @@ public class HousekeepingReportControl {
 
     private int priority(RoomStatus status) {
         return switch (status) {
-            case CLEANING_IN_PROGRESS -> 1;
-            case INSPECTED -> 2;
-            case READY_FOR_CHECK_IN -> 3;
-            case SCHEDULED -> 4;
+            case CLEANING_IN_PROGRESS ->
+                1;
+            case INSPECTED ->
+                2;
+            case READY_FOR_CHECK_IN ->
+                3;
+            case SCHEDULED ->
+                4;
         };
     }
 
+    
     private int findStaff(
             StaffRow[] rows,
             int size,
@@ -260,6 +272,7 @@ public class HousekeepingReportControl {
         return -1;
     }
 
+    /* Uses insertion sort to arrange the aggregated staff rows. */
     private void sortStaff(
             StaffRow[] rows,
             int size) {
@@ -279,6 +292,7 @@ public class HousekeepingReportControl {
         }
     }
 
+    /* Orders staff by active tasks, completed tasks and then staff ID. */
     private int compareStaff(
             StaffRow first,
             StaffRow second) {
@@ -298,6 +312,7 @@ public class HousekeepingReportControl {
                         second.staffId);
     }
 
+    /* Holds temporary totals for one staff member while building the report. */
     private static class StaffRow {
 
         private final String staffId;
@@ -316,6 +331,7 @@ public class HousekeepingReportControl {
             this.staffName = staffName;
         }
 
+        /* Adds one task to this staff member's report totals. */
         private void include(
                 HousekeepingTask task) {
 

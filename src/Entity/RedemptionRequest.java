@@ -1,6 +1,8 @@
+/**
+ * Author: Law Tian Xiang
+ * 
+ */
 package Entity;
-
-import Entity.Member;
 
 public class RedemptionRequest {
     private Member member;
@@ -13,9 +15,19 @@ public class RedemptionRequest {
         this.pointsCost = pointsCost;
     }
 
-    public Member getMember() { return member; }
-    public String getRewardItem() { return rewardItem; }
-    public int getPointsCost() { return pointsCost; }
+    // getter
+    public Member getMember() 
+    {
+        return member; 
+    }
+    public String getRewardItem() 
+    {
+        return rewardItem; 
+    }
+    public int getPointsCost()
+    { 
+        return pointsCost;
+    }
 
     @Override
     public String toString() {

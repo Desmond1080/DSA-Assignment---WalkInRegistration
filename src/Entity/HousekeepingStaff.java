@@ -1,11 +1,12 @@
 package Entity;
 
 /**
+ * 
  *
  * @author shujuntan
  */
 
-/* Store the basic information of the housekeeping staff */
+/* Store the fixed basic information of the housekeeping staff */
 public class HousekeepingStaff {
 
     private final String staffId;

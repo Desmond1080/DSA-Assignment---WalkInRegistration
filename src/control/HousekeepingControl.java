@@ -15,10 +15,10 @@ import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 
 /**
+ * Stores housekeeping data and controls all task operations and business rules.
  *
  * @author shujuntan
  */
-
 public class HousekeepingControl {
 
     private static final int MAX_TASKS = 100;
@@ -32,7 +32,7 @@ public class HousekeepingControl {
             "Task", "Room", "Floor", "Type", "Staff", "Status",
             "Scheduled", "Latest reason"
     );
-    
+
     /* Main Storage */
     private final TaskSlot[] slots = new TaskSlot[MAX_TASKS];  // Each slot keeps a task together with its individual status history.
     private final Room[] rooms = createRooms();
@@ -41,6 +41,7 @@ public class HousekeepingControl {
     private int taskCount;
     private String lastMessage;
 
+    /* Loads the data set when the module starts. */
     public HousekeepingControl() {
         seedData();
         lastMessage = "Housekeeping module loaded.";
@@ -50,6 +51,7 @@ public class HousekeepingControl {
         return lastMessage;
     }
 
+    /*  let the report control read the same task records. */
     int getTaskCountForReport() {
         return taskCount;
     }
@@ -63,6 +65,7 @@ public class HousekeepingControl {
         return member == null ? "Not assigned" : member.getStaffName();
     }
 
+    /* Converts enum values into user-friendly names for the status menus. */
     public String[] getAvailableStatusNames() {
         RoomStatus[] values = RoomStatus.values();
         String[] names = new String[values.length];
@@ -139,10 +142,10 @@ public class HousekeepingControl {
 
         TaskSlot slot = findActiveByRoom(roomNumber);
 
-        return slot.task.getCurrentStatus() == RoomStatus.SCHEDULED ? ""  : "Only rooms with Scheduled status can be rescheduled.";
+        return slot.task.getCurrentStatus() == RoomStatus.SCHEDULED ? "" : "Only rooms with Scheduled status can be rescheduled.";
     }
 
-    public String validateAvailableStaffId( String staffId, boolean blankAllowed, String excludedTaskId) {
+    public String validateAvailableStaffId(String staffId, boolean blankAllowed, String excludedTaskId) {
 
         if (blank(staffId)) {
             return blankAllowed ? "" : "Staff ID is required.";
@@ -211,10 +214,11 @@ public class HousekeepingControl {
             return "Choose one of the displayed status numbers.";
         }
 
-        return validTransition( slot.task.getCurrentStatus(),  values[statusNumber - 1]) ? "" : "That status is not valid from " + slot.task.getCurrentStatus() + ".";
+        return validTransition(slot.task.getCurrentStatus(), values[statusNumber - 1]) ? "" : "That status is not valid from " + slot.task.getCurrentStatus() + ".";
     }
 
-    public boolean addTask(String taskId,String roomNumber, String staffId, String date, String time) {
+    /* Validates the supplied details, creates a task and stores its TaskSlot. */
+    public boolean addTask(String taskId, String roomNumber, String staffId, String date, String time) {
 
         if (taskCount == MAX_TASKS) {
             return fail("Task storage is full.");
@@ -264,6 +268,7 @@ public class HousekeepingControl {
         return succeed("Housekeeping task added successfully.");
     }
 
+    /* Applies the next valid status and records the new state for undo. */
     public boolean updateStatus(
             String roomNumber,
             int statusNumber) {
@@ -300,6 +305,7 @@ public class HousekeepingControl {
                 + newStatus + ".");
     }
 
+    /* Reschedules a Scheduled task and records the revised state for undo. */
     public boolean processLateCheckout(
             String roomNumber,
             String date,
@@ -340,11 +346,12 @@ public class HousekeepingControl {
                 + slot.task.getScheduledTimeText() + ".");
     }
 
+    /* Restores the most recent previous snapshot for an active task. */
     public boolean undoLatestChange(String roomNumber) {
         TaskSlot slot = findActiveByRoom(roomNumber);
 
         if (slot == null) {
-            return fail( "Only active housekeeping tasks can be undone.");
+            return fail("Only active housekeeping tasks can be undone.");
         }
 
         if (!slot.history.canUndo()) {
@@ -358,14 +365,15 @@ public class HousekeepingControl {
             slot.task.restoreSnapshot(currentSnapshot);
             slot.history.record(currentSnapshot);
 
-            return fail( "Undo cancelled because the staff member is now busy.");
+            return fail("Undo cancelled because the staff member is now busy.");
         }
 
         slot.task.recordRollback();
 
-        return succeed( "Latest change was undone. Current status: " + slot.task.getCurrentStatus() + ", scheduled time: " + slot.task.getScheduledTimeText() + ".");
+        return succeed("Latest change was undone. Current status: " + slot.task.getCurrentStatus() + ", scheduled time: " + slot.task.getScheduledTimeText() + ".");
     }
 
+    /* Separates all stored records into active and finished task tables. */
     public String getTaskRecordsTable() {
         StringBuilder output = new StringBuilder("\nACTIVE HOUSEKEEPING TASKS\n")
                 .append(TASK_HEADER)
@@ -409,9 +417,10 @@ public class HousekeepingControl {
                 .toString();
     }
 
+    /* Builds the operational overview containing unfinished tasks only. */
     public String getTaskStatusOverview() {
-        StringBuilder output =
-                new StringBuilder("\nHOUSEKEEPING TASK STATUS\n")
+        StringBuilder output
+                = new StringBuilder("\nHOUSEKEEPING TASK STATUS\n")
                         .append(String.format(
                                 "%-7s %-8s %-6s %-12s %-11s %-25s %-16s %s%n",
                                 "Task", "Room", "Floor",
@@ -440,9 +449,10 @@ public class HousekeepingControl {
         return output.toString();
     }
 
+    /* Lists staff who are not assigned to another unfinished task. */
     public String getAvailableStaffTable(String excludedTaskId) {
-        StringBuilder output =
-                new StringBuilder("\nAVAILABLE HOUSEKEEPING STAFF\n")
+        StringBuilder output
+                = new StringBuilder("\nAVAILABLE HOUSEKEEPING STAFF\n")
                         .append(String.format(
                                 "%-10s %-24s %-12s%n",
                                 "Staff ID", "Name", "Shift"))
@@ -476,9 +486,10 @@ public class HousekeepingControl {
                 .toString();
     }
 
+    /* Lists rooms that do not currently have an unfinished task. */
     public String getAvailableRoomsForTaskTable() {
-        StringBuilder output =
-                new StringBuilder("\nAVAILABLE ROOMS FOR HOUSEKEEPING TASK\n")
+        StringBuilder output
+                = new StringBuilder("\nAVAILABLE ROOMS FOR HOUSEKEEPING TASK\n")
                         .append(String.format(
                                 "%-8s %-7s %-12s %s%n",
                                 "Room", "Floor", "Type", "Task status"))
@@ -510,9 +521,10 @@ public class HousekeepingControl {
                 .toString();
     }
 
+    /* Lists only Scheduled tasks because cleaning must not have started. */
     public String getScheduledRoomsForRescheduleTable() {
-        StringBuilder output =
-                new StringBuilder("\nROOMS AVAILABLE FOR RESCHEDULING\n")
+        StringBuilder output
+                = new StringBuilder("\nROOMS AVAILABLE FOR RESCHEDULING\n")
                         .append(String.format(
                                 "%-7s %-8s %-11s %-25s %-16s%n",
                                 "Task", "Room", "Staff", "Status", "Scheduled"))
@@ -547,9 +559,10 @@ public class HousekeepingControl {
                 .toString();
     }
 
+    /* Lists active tasks whose history contains a previous snapshot. */
     public String getUndoableTasksTable() {
-        StringBuilder output =
-                new StringBuilder("\nTASKS AVAILABLE FOR UNDO\n")
+        StringBuilder output
+                = new StringBuilder("\nTASKS AVAILABLE FOR UNDO\n")
                         .append(String.format(
                                 "%-7s %-8s %-11s %-25s %-16s%n",
                                 "Task", "Room", "Staff", "Status", "Scheduled"))
@@ -585,9 +598,10 @@ public class HousekeepingControl {
                 .toString();
     }
 
+   
     private void seedData() {
-        LocalDateTime now =
-                LocalDateTime.now().withSecond(0).withNano(0);
+        LocalDateTime now
+                = LocalDateTime.now().withSecond(0).withNano(0);
 
         addSlot(new HousekeepingTask(
                 "T001", "0101", 1, "Deluxe", "S005",
@@ -597,7 +611,7 @@ public class HousekeepingControl {
                 "T002", "0104", 1, "Suite", "S006",
                 RoomStatus.SCHEDULED, now.plusMinutes(45)));
 
-        addSlot(new HousekeepingTask( "T003", "0202", 2, "Deluxe", "S001",
+        addSlot(new HousekeepingTask("T003", "0202", 2, "Deluxe", "S001",
                 RoomStatus.SCHEDULED, now.plusMinutes(15)));
 
         addSlot(new HousekeepingTask(
@@ -658,6 +672,7 @@ public class HousekeepingControl {
         };
     }
 
+    /* Defines the one-way housekeeping workflow between room statuses. */
     private boolean validTransition(RoomStatus current, RoomStatus next) {
         return switch (current) {
             case SCHEDULED ->
@@ -669,11 +684,12 @@ public class HousekeepingControl {
             case INSPECTED ->
                 next == RoomStatus.READY_FOR_CHECK_IN;
 
-            case READY_FOR_CHECK_IN -> false;
+            case READY_FOR_CHECK_IN ->
+                false;
         };
     }
 
-    private String getTransitionDisplayText( RoomStatus current, RoomStatus next) {
+    private String getTransitionDisplayText(RoomStatus current, RoomStatus next) {
 
         if (current == RoomStatus.INSPECTED && next == RoomStatus.READY_FOR_CHECK_IN) {
             return "Ready for Check-In (inspection passed)";
@@ -684,25 +700,32 @@ public class HousekeepingControl {
 
     private String defaultStatusReason(RoomStatus status) {
         return switch (status) {
-            case SCHEDULED -> "Task scheduled for cleaning";
-            case CLEANING_IN_PROGRESS -> "Cleaner started work";
-            case INSPECTED -> "Inspection completed";
-            case READY_FOR_CHECK_IN -> "Room released to front desk";
+            case SCHEDULED ->
+                "Task scheduled for cleaning";
+            case CLEANING_IN_PROGRESS ->
+                "Cleaner started work";
+            case INSPECTED ->
+                "Inspection completed";
+            case READY_FOR_CHECK_IN ->
+                "Room released to front desk";
         };
     }
 
+    /* Groups the task with its history and appends it to the occupied array. */
     private void addSlot(HousekeepingTask task) {
         slots[taskCount] = new TaskSlot(task);
         taskCount++;
     }
 
-    private void applyStatus( TaskSlot slot, RoomStatus status, String reason) {
+   
+    private void applyStatus(TaskSlot slot, RoomStatus status, String reason) {
 
         slot.task.changeStatus(status, reason);
         slot.history.record(slot.task.createSnapshot());
-        
+
     }
 
+    /* Prefers an active task, otherwise returns the room's latest stored task. */
     private TaskSlot findByRoom(String roomNumber) {
         TaskSlot activeTask = findActiveByRoom(roomNumber);
 
@@ -722,6 +745,7 @@ public class HousekeepingControl {
         return null;
     }
 
+    /* Searches backwards for the room's newest unfinished task. */
     private TaskSlot findActiveByRoom(String roomNumber) {
         if (!blank(roomNumber)) {
             for (int i = taskCount - 1; i >= 0; i--) {
@@ -738,6 +762,7 @@ public class HousekeepingControl {
         return null;
     }
 
+    /* Performs a linear search for the TaskSlot with the given task ID. */
     private TaskSlot findByTaskId(String taskId) {
         if (!blank(taskId)) {
             for (int i = 0; i < taskCount; i++) {
@@ -785,8 +810,8 @@ public class HousekeepingControl {
             for (int i = 0; i < taskCount; i++) {
                 HousekeepingTask task = slots[i].task;
 
-                boolean excluded =
-                        !blank(excludedTaskId)
+                boolean excluded
+                        = !blank(excludedTaskId)
                         && task.getTaskId()
                                 .equalsIgnoreCase(excludedTaskId.trim());
 
@@ -809,6 +834,7 @@ public class HousekeepingControl {
                         task.getTaskId()) != null;
     }
 
+   
     private boolean finished(HousekeepingTask task) {
         return task.getCurrentStatus()
                 == RoomStatus.READY_FOR_CHECK_IN;
@@ -834,13 +860,15 @@ public class HousekeepingControl {
         return text == null || text.trim().isEmpty();
     }
 
+    /* Keeps one task together with its own snapshot history. */
     private static class TaskSlot {
 
         private final HousekeepingTask task;
 
-        private final HistoryStackInterface<StatusSnapshot> history =
-                new LinkedHistoryStack<>();
+        private final HistoryStackInterface<StatusSnapshot> history
+                = new LinkedHistoryStack<>();
 
+        /* The first history entry captures the task's initial Scheduled state. */
         private TaskSlot(HousekeepingTask task) {
             this.task = task;
             history.record(task.createSnapshot());

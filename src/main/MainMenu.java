@@ -58,7 +58,7 @@ public class MainMenu {
         System.out.println("\n==== Modules Choice =====");
         System.out.println("1. Walk-In / Standard Booking ");
         System.out.println("2. HouseKeeping and TaskLog ");
-        System.out.println("3. Loyalty Point ");
+        System.out.println("3. Loyalty and Rewards ");
         System.out.println("0. Exit System ");
         
         System.out.print("Enter choice: ");

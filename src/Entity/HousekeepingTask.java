@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * 
  *
  * @author shujuntan
  */
@@ -46,12 +47,14 @@ public class HousekeepingTask {
         }
     }
 
+    /* Fixed task details that cannot be changed after the task is created. */
     private final String taskId;
     private final String roomNumber;
     private final int floor;
     private final String roomType;
     private final String assignedStaffId;
 
+    /* Changeable details saved in snapshots to support the undo function. */
     private RoomStatus currentStatus;
     private LocalDateTime scheduledTime;
     private LocalDateTime lastUpdated;
@@ -110,6 +113,7 @@ public class HousekeepingTask {
         return currentStatus;
     }
 
+   
     public String getStatusDisplayText() {
         if (currentStatus == RoomStatus.SCHEDULED && lastReason.equals( "Cleaning rescheduled after late checkout")) {
             return "Scheduled (Rescheduled)";
@@ -134,6 +138,7 @@ public class HousekeepingTask {
         return lateCheckoutCount;
     }
 
+    /* Applies a status change to the actual task object. */
     public void changeStatus(RoomStatus newStatus, String reason) {
         if (newStatus == null) {
             throw new IllegalArgumentException("New status is required.");
@@ -144,6 +149,7 @@ public class HousekeepingTask {
         lastReason = cleanReason(reason);
     }
 
+    /* Changes the cleaning time while keeping the current room status. */
     public void reschedule(LocalDateTime newTime, String reason) {
         if (newTime == null) {
             throw new IllegalArgumentException("New scheduled time is required.");
@@ -154,6 +160,7 @@ public class HousekeepingTask {
         lastReason = cleanReason(reason);
     }
 
+    /* Captures a complete copy of the task fields that can be undone. */
     public StatusSnapshot createSnapshot() {
         return new StatusSnapshot(
                 currentStatus,
@@ -162,6 +169,7 @@ public class HousekeepingTask {
                 lastReason);
     }
 
+    /* Copies a previous snapshot back into the actual task during undo. */
     public void restoreSnapshot(StatusSnapshot snapshot) {
         if (snapshot == null) {
             throw new IllegalArgumentException("Snapshot is required.");
@@ -195,6 +203,7 @@ public class HousekeepingTask {
         }
     }
 
+  
     @Override
     public String toString() {
         return String.format(

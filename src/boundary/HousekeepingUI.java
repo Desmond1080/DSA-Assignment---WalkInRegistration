@@ -5,6 +5,7 @@ import control.HousekeepingReportControl;
 import java.util.Scanner;
 
 /**
+ * Handles all console menus, user input and output for the housekeeping module.
  *
  * @author shujuntan
  */
@@ -25,7 +26,7 @@ public class HousekeepingUI {
     public void run() {
         boolean running = true;
 
-        System.out.println("Welcome to TARUMT Resorts " + "Housekeeping Module");
+        System.out.println("Welcome to TARUMT Resort " + "Housekeeping Module");
 
         while (running) {
             showMainMenu();
@@ -65,6 +66,7 @@ public class HousekeepingUI {
         System.out.println("Enter B at any input field " + "to return here.");
     }
 
+    
     private void taskMenu() {
         boolean open = true;
 
@@ -93,6 +95,7 @@ public class HousekeepingUI {
         }
     }
 
+    
     private void statusMenu() {
         boolean open = true;
 
@@ -125,6 +128,7 @@ public class HousekeepingUI {
         }
     }
 
+  
     private void reportMenu() {
         boolean open = true;
 
@@ -151,6 +155,7 @@ public class HousekeepingUI {
         }
     }
 
+    /* Collects task details and sends them to the control for processing. */
     private void addTask() {
         System.out.println("\n--- ADD HOUSEKEEPING TASK ---");
 
@@ -189,21 +194,23 @@ public class HousekeepingUI {
 
             int statusNumber = readStatusNumber(roomNumber);
 
-            showResult(
-                    control.updateStatus(
-                            roomNumber,
-                            statusNumber)
-            );
+            showResult(control.updateStatus(roomNumber, statusNumber));
 
             if (!control.validateRoomForStatusUpdate(roomNumber).isEmpty()) {
-
+                
                 System.out.println( "Task completed and room released.");
                 continueUpdating = false;
+                
             } else {
                 continueUpdating = readYesNo("Continue updating this room? (Y/N): ");
+                
+                if (continueUpdating) {
+                    System.out.println();
+                }
             }
         }
     }
+
 
     private void lateCheckout() {
         System.out.println(  "\n--- RESCHEDULE FOR LATE CHECKOUT ---");
@@ -219,6 +226,7 @@ public class HousekeepingUI {
         showResult( control.processLateCheckout(roomNumber, date, time));
     }
 
+    /* Displays undoable tasks and asks the control to restore one task. */
     private void undoStatus() {
         System.out.println("\n--- UNDO LATEST CHANGE ---");
 
@@ -228,6 +236,7 @@ public class HousekeepingUI {
 
         showResult(control.undoLatestChange(roomNumber));
     }
+
 
     private void roomReport() {
         System.out.println( "\n--- ROOM STATUS REPORT ---");
@@ -248,10 +257,15 @@ public class HousekeepingUI {
         System.out.println(reports.generateRoomStatusReport(floor,statusNumber));
     }
 
+
     private void staffReport() {
         System.out.println( "\n--- STAFF TASK SUMMARY REPORT ---");
 
-        String staffId = input( "Staff ID (blank or ALL " + "for every staff): ");
+        String staffId = required("Staff ID (0 for all): ");
+        
+        if (staffId.equals("0")) {
+            staffId = "ALL";
+        }
 
         System.out.println("Task record filter:");
         System.out.println("0. All");
@@ -468,10 +482,12 @@ public class HousekeepingUI {
         return value;
     }
 
+    /* Displays the latest success or failure message prepared by the control. */
     private void showResult(boolean success) {
         System.out.println((success  ? "[SUCCESS] " : "[FAILED] ") + control.getLastMessage());
     }
 
+    /* Immediately returns control to the main menu when B is entered. */
     private static class BackException
             extends RuntimeException {
 
