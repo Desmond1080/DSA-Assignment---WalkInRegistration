@@ -4,6 +4,7 @@
 This is a console-based Java resort system built for a Data Structures and Algorithms assignment.  
 The project currently includes:
 - **Walk-In / Standard Booking Registration** module
+- **Housekeeping & Task Log** module
 - **Loyalty & Rewards** module
 
 ## Main Features
@@ -14,6 +15,12 @@ The project currently includes:
 - Process next guest registration
 - Cancel registration by confirmation number
 - Generate waiting queue and processed guest reports
+
+### Housekeeping & Task Log
+- Add and display housekeeping task records
+- Update room cleaning status and process late checkout rescheduling
+- Undo latest task status change with history tracking
+- Generate room status and staff task summary reports
 
 ### Loyalty & Rewards
 - View member profile
@@ -26,10 +33,13 @@ The project currently includes:
 - `LinkedQueue` (custom): waiting queue for guests
 - `ArrayQueue` (custom): redemption request queue
 - `ArrayList` (custom): processed guest storage
+- `LinkedHistoryStack` (custom): housekeeping task status undo history
 
 ## Project Structure
 - `src/main/MainMenu.java` - application entry point
 - `src/control/WalkInRegistration.java` - walk-in registration logic
+- `src/control/HousekeepingControl.java` - housekeeping task and status logic
+- `src/control/HousekeepingReportControl.java` - housekeeping reporting logic
 - `src/control/LoyaltyAndRewardsControl.java` - loyalty business logic
 - `src/boundary/` - console UI classes
 - `src/adt/` - custom ADT implementations
