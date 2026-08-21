@@ -49,13 +49,22 @@ The project currently includes:
 - JDK 20
 - Apache Ant
 
-## Build and Run
-From the project root:
+## How to Run the Application
+1. Open a terminal.
+2. Navigate to the project root directory.
+3. Build the project:
 
 ```bash
 ant clean jar
+```
+
+4. Run the console application:
+
+```bash
 ant run
 ```
+
+When the app starts, the main menu from `src/main/MainMenu.java` will appear in the terminal.
 
 ## Test
 ```bash
