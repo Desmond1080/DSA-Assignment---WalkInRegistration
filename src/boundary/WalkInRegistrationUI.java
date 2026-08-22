@@ -276,7 +276,7 @@ public class WalkInRegistrationUI {
 
         for(int i = 0; i < items.length; i++){
             Guest g = items[i];
-            System.out.printf("%-4d %-12s %-18s %-14s %-18s %-12s %-20s %-10d %-5s%n",
+            System.out.printf("%-4d %-12s %-18s %-14s %-18s %-12s %-20s %-10d %-10s%n",
                     (i + 1),
                     g.getConfirmationNumber(),
                     truncate(g.getName(), 18),

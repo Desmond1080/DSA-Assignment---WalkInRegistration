@@ -200,6 +200,7 @@ public class WalkInRegistration {
         Guest[] items = getQueueItem();
         if (items.length == 0){
             walkInUI.displayEmptyQueueMessage();
+            walkInUI.pauseScreen();
             return;
         }
         
